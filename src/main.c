@@ -20,16 +20,17 @@ int main() {
 
     char * command = malloc(0xFF * sizeof(char));
     if (!init_file(FILE_NAME)) create_file(FILE_NAME);
+    Debt * debt_arr = malloc(sizeof(Debt) * get_debt_count(FILE_NAME));
 
     while (!quit) {
-        Debt * debt_arr = calloc(sizeof(Debt), get_debt_count(FILE_NAME));
+        debt_arr = realloc(debt_arr, sizeof(Debt) * get_debt_count(FILE_NAME));
         fprintf(stdout, "iou > ");
         fgets(command, 0xFF * sizeof(char), stdin);
         if (strlen(command) <= 1) continue;
         command = strtok(command, "\n");
         handle_input(debt_arr, command, &quit, FILE_NAME);
-        free(debt_arr);
     }
+    free(debt_arr);
     free(command);
 
     return 0;
