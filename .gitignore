@@ -1,3 +1,4 @@
 /.vscode
-/debt.dat
 /iou
+*.o
+/*.dat
