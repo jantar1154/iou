@@ -35,10 +35,8 @@ void read_file(Debt * debt_arr, const char * filename) {
     FILE * debt_file = fopen(filename, "rb");
     // Offset it to not read debt count
     fseek(debt_file, sizeof(unsigned short), SEEK_SET);
-    for (int i = 0; fread(debt_arr+i, sizeof(Debt), 1, debt_file); ++i) {
-        Debt * d = debt_arr + i;
-        printf("From: %s\nTo: %s\nAmount: %u %s\n", d->from, d->to, d->amount, d->currency);
-    }
+    // Populate `debt_arr`
+    for (int i = 0; fread(debt_arr+i, sizeof(Debt), 1, debt_file); ++i);
     fclose(debt_file);
 }
 

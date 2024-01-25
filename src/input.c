@@ -39,11 +39,23 @@ void add(const char * filename) {
     free(str);
 }
 
+// Prints out every debt from `debt_arr`
+void print_debts(Debt * debt_arr, const char * filename) {
+    int limit = get_debt_count(filename);
+    for (int i = 0; i < limit; i++) {
+        Debt * d = debt_arr + i;
+        printf("[%i]\nFrom:\t%s\nTo:\t%s\nAmount:\t%i %s\n\n",
+            i+1, d->from, d->to, d->amount, d->currency
+        );
+    }
+}
+
 // Handles input commands
 void handle_input(Debt * debt_arr, const char * msg, short * quit, const char * filename) {
     if (!strcmp(msg, "list")) {
         if (get_debt_count(filename)) {
             read_file(debt_arr, filename);
+            print_debts(debt_arr, filename);
         } else {
             puts("No entries found");
         }
