@@ -13,4 +13,6 @@ void read_file(Debt * debt_arr, const char * filename);
 
 void add_entry(Debt * entry, const char * filename);
 
+void edit_entry(const int index, Debt * debt_arr, const Debt replace);
+
 #endif // FILE_HANDLER_H

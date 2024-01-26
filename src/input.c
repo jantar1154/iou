@@ -4,6 +4,7 @@
 
 #include "h/input.h"
 #include "h/file_handler.h"
+#include "h/display.h"
 
 const char * HELP =
     "list:\tlist your debts\n"
@@ -26,8 +27,7 @@ void add(const char * filename) {
     printf("Amount: ");
     char * amount_s = malloc(0x21);
     fgets(amount_s, 32, stdin);
-    const unsigned int amount_i = atoi(amount_s);
-    printf("amout_i: %i\n", amount_i);
+    const size_t amount_i = atoi(amount_s);
     memcpy(&debt.amount, &amount_i, sizeof(debt.amount));
     free(amount_s);
 
@@ -39,23 +39,45 @@ void add(const char * filename) {
     free(str);
 }
 
-// Prints out every debt from `debt_arr`
-void print_debts(Debt * debt_arr, const char * filename) {
-    int limit = get_debt_count(filename);
-    for (int i = 0; i < limit; i++) {
-        Debt * d = debt_arr + i;
-        printf("[%i]\nFrom:\t%s\nTo:\t%s\nAmount:\t%i %s\n\n",
-            i+1, d->from, d->to, d->amount, d->currency
-        );
-    }
+void edit(Debt * debt_arr) {
+    Debt d;
+    size_t index;
+    char * str = malloc(0xFF * sizeof(char));
+    putchar('\n');
+    
+    printf("index: ");
+    fgets(str, 0xFF * sizeof(char), stdin);
+    index = strtol(str, NULL, 10);
+    
+    printf("From: ");
+    fgets(str, 0xFF * sizeof(char), stdin);
+    strncpy(d.from, strtok(str, "\n"), sizeof(d.from));
+
+    printf("To: ");
+    fgets(str, 0xFF * sizeof(char), stdin);
+    strncpy(d.to, strtok(str, "\n"), sizeof(d.to));
+
+    printf("Amount: ");
+    fgets(str, 0xFF * sizeof(char), stdin);
+    int amount = strtol(str, NULL, 10);
+    d.amount = amount;
+
+    printf("Currency: ");
+    fgets(str, 0xFF * sizeof(char), stdin);
+    strncpy(d.currency, strtok(str, "\n"), sizeof(d.currency));
+
+    edit_entry(index, debt_arr, d);
+
+    free(str);
 }
 
 // Handles input commands
 void handle_input(Debt * debt_arr, const char * msg, short * quit, const char * filename) {
+    unsigned short debt_count = get_debt_count(filename);
     if (!strcmp(msg, "list")) {
-        if (get_debt_count(filename)) {
+        if (debt_count) {
             read_file(debt_arr, filename);
-            print_debts(debt_arr, filename);
+            print_debts(debt_arr, debt_count);
         } else {
             puts("No entries found");
         }
@@ -64,7 +86,9 @@ void handle_input(Debt * debt_arr, const char * msg, short * quit, const char * 
     } else if (!strcmp(msg, "add")) {
         add(filename);
     } else if (!strcmp(msg, "count")) {
-        printf("Number of entries: %u\n", get_debt_count(filename));
+        printf("Number of entries: %u\n", debt_count);
+    } else if (!strcmp(msg, "edit")) {
+        edit(debt_arr);
     } else if (!strcmp(msg, "exit")) {
         *quit = 1;
     } else {

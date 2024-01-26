@@ -36,7 +36,7 @@ void read_file(Debt * debt_arr, const char * filename) {
     // Offset it to not read debt count
     fseek(debt_file, sizeof(unsigned short), SEEK_SET);
     // Populate `debt_arr`
-    for (int i = 0; fread(debt_arr+i, sizeof(Debt), 1, debt_file); ++i);
+    for (size_t i = 0; fread(debt_arr+i, sizeof(Debt), 1, debt_file); ++i);
     fclose(debt_file);
 }
 
@@ -50,4 +50,17 @@ void add_entry(Debt * entry, const char * filename) {
     fseek(debt_file, 0, SEEK_END);
     fwrite(entry, sizeof(Debt), 1, debt_file);
     fclose(debt_file);
+}
+
+// Returns pointer to a `Debt` in `debt_arr` located on index `index`
+Debt * get_debt_by_id(Debt * debt_arr, const size_t index) {
+    size_t count = sizeof(*debt_arr) / sizeof(Debt);
+    if (index > count) return NULL;
+    Debt * debt = debt_arr + index;
+    return debt;
+}
+
+// Edits already existing entry in file
+void edit_entry(const int index, Debt * debt_arr, const Debt replace) {
+
 }
