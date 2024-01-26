@@ -62,5 +62,5 @@ Debt * get_debt_by_id(Debt * debt_arr, const size_t index) {
 
 // Edits already existing entry in file
 void edit_entry(const int index, Debt * debt_arr, const Debt replace) {
-
+    // TODO: finish this function
 }
