@@ -1,13 +1,19 @@
 CC = gcc
 name = iou
 args = -Wall -fsanitize=address -g -O0
+srcdir = src
+objdir = build
+
+src = $(wildcard $(srcdir)/*.c)
+obj = $(src:$(srcdir)/%.c=$(objdir)/%.o)
 
 ######
 
-all: build
+$(name): $(obj)
+	$(CC) $(args) -o $@ $^
 
-build:
-	$(CC) $(args) src/*.c -o $(name)
+$(objdir)/%.o: $(srcdir)/%.c
+	$(CC) $(args) -o $@ -c $<
 
 clean:
-	rm -rf $(name)
+	rm $(name) $(obj)

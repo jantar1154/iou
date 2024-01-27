@@ -34,7 +34,7 @@ void add(const char * filename) {
     printf("Currency: ");
     fgets(str, sizeof(debt.currency), stdin);
     memcpy(debt.currency, strtok(str, "\n"), sizeof(debt.currency));
-    add_entry(&debt, filename);
+    fh_add_entry(&debt, filename);
 
     free(str);
 }
@@ -66,18 +66,18 @@ void edit(Debt * debt_arr) {
     fgets(str, 0xFF * sizeof(char), stdin);
     strncpy(d.currency, strtok(str, "\n"), sizeof(d.currency));
 
-    edit_entry(index, debt_arr, d);
+    fh_edit_entry(index, debt_arr, d);
 
     free(str);
 }
 
 // Handles input commands
-void handle_input(Debt * debt_arr, const char * msg, short * quit, const char * filename) {
-    unsigned short debt_count = get_debt_count(filename);
+void i_handle_input(Debt * debt_arr, const char * msg, short * quit, const char * filename) {
+    unsigned short debt_count = fh_get_debt_count(filename);
     if (!strcmp(msg, "list")) {
         if (debt_count) {
-            read_file(debt_arr, filename);
-            print_debts(debt_arr, debt_count);
+            fh_read_file(debt_arr, filename);
+            d_print_debts(debt_arr, debt_count);
         } else {
             puts("No entries found");
         }

@@ -4,7 +4,7 @@
 #include "h/debt.h"
 
 // Checks if debt_file exists
-int init_file(const char * filename) {
+int fh_init_file(const char * filename) {
     FILE * debt_file = fopen(filename, "rb");
     int rtn = 1;
     if (!debt_file) rtn = 0;
@@ -13,7 +13,7 @@ int init_file(const char * filename) {
 }
 
 // Creates ready empty file
-void create_file(const char * filename) {
+void fh_create_file(const char * filename) {
     FILE * debt_file = fopen(filename, "wb"); // touch
     // Initialise value for debt count
     unsigned short count = 0;
@@ -22,7 +22,7 @@ void create_file(const char * filename) {
 }
 
 // Reads integer giving you number of debts in file
-unsigned short get_debt_count(const char * filename) {
+unsigned short fh_get_debt_count(const char * filename) {
     FILE * debt_file = fopen(filename, "rb");
     unsigned short count;
     fread(&count, 2, 1, debt_file);
@@ -31,7 +31,7 @@ unsigned short get_debt_count(const char * filename) {
 }
 
 // Reads the file and populates debt_arr
-void read_file(Debt * debt_arr, const char * filename) {
+void fh_read_file(Debt * debt_arr, const char * filename) {
     FILE * debt_file = fopen(filename, "rb");
     // Offset it to not read debt count
     fseek(debt_file, sizeof(unsigned short), SEEK_SET);
@@ -40,8 +40,8 @@ void read_file(Debt * debt_arr, const char * filename) {
     fclose(debt_file);
 }
 
-void add_entry(Debt * entry, const char * filename) {
-    unsigned short count = get_debt_count(filename) + 1;
+void fh_add_entry(Debt * entry, const char * filename) {
+    unsigned short count = fh_get_debt_count(filename) + 1;
     FILE * debt_file = fopen(filename, "r+b");
     // Increase debt count number
     fwrite(&count, sizeof(unsigned short), 1, debt_file);
@@ -53,7 +53,7 @@ void add_entry(Debt * entry, const char * filename) {
 }
 
 // Returns pointer to a `Debt` in `debt_arr` located on index `index`
-Debt * get_debt_by_id(Debt * debt_arr, const size_t index) {
+Debt * fh_get_debt_by_id(Debt * debt_arr, const size_t index) {
     size_t count = sizeof(*debt_arr) / sizeof(Debt);
     if (index > count) return NULL;
     Debt * debt = debt_arr + index;
@@ -61,6 +61,6 @@ Debt * get_debt_by_id(Debt * debt_arr, const size_t index) {
 }
 
 // Edits already existing entry in file
-void edit_entry(const int index, Debt * debt_arr, const Debt replace) {
+void fh_edit_entry(const int index, Debt * debt_arr, const Debt replace) {
     // TODO: finish this function
 }

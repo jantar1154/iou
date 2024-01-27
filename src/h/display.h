@@ -3,6 +3,6 @@
 
 #include "debt.h"
 
-void print_debts(Debt * debt_arr, int debt_count);
+void d_print_debts(Debt * debt_arr, int debt_count);
 
 #endif // DISPLAY_H

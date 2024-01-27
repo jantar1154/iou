@@ -19,16 +19,16 @@ int main() {
     short quit = 0;
 
     char * command = malloc(0xFF * sizeof(char));
-    if (!init_file(FILE_NAME)) create_file(FILE_NAME);
-    Debt * debt_arr = malloc(sizeof(Debt) * get_debt_count(FILE_NAME));
+    if (!fh_init_file(FILE_NAME)) fh_create_file(FILE_NAME);
+    Debt * debt_arr = malloc(sizeof(Debt) * fh_get_debt_count(FILE_NAME));
 
     while (!quit) {
-        debt_arr = realloc(debt_arr, sizeof(Debt) * get_debt_count(FILE_NAME));
+        debt_arr = realloc(debt_arr, sizeof(Debt) * fh_get_debt_count(FILE_NAME));
         fprintf(stdout, "iou > ");
         fgets(command, 0xFF * sizeof(char), stdin);
         if (strlen(command) <= 1) continue;
         command = strtok(command, "\n");
-        handle_input(debt_arr, command, &quit, FILE_NAME);
+        i_handle_input(debt_arr, command, &quit, FILE_NAME);
     }
     free(debt_arr);
     free(command);
