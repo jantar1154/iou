@@ -10,6 +10,7 @@ const char * HELP =
     "list:\tlist your debts\n"
     "count:\tprints number of debts you have\n"
     "add:\tadds new entry\n"
+    "edit:\tedits existing entry\n"
     "exit:\texits program\n";
 
 // Handles user input to add new entry into the file
@@ -39,34 +40,40 @@ void add(const char * filename) {
     free(str);
 }
 
-void edit(Debt * debt_arr) {
+void edit(Debt * debt_arr, const char * filename) {
     Debt d;
     size_t index;
+    size_t max_size = fh_get_debt_count(filename);
     char * str = malloc(0xFF * sizeof(char));
     putchar('\n');
     
     printf("index: ");
     fgets(str, 0xFF * sizeof(char), stdin);
     index = strtol(str, NULL, 10);
+    if (index > max_size) {
+        puts("Index out of range");
+        return;
+    }
+    Debt * og = debt_arr + index - 1;
     
-    printf("From: ");
+    printf("From: %s -> ", og->from);
     fgets(str, 0xFF * sizeof(char), stdin);
-    strncpy(d.from, strtok(str, "\n"), sizeof(d.from));
+    strcpy(d.from, strtok(str, "\n"));
 
-    printf("To: ");
+    printf("To: %s -> ", og->to);
     fgets(str, 0xFF * sizeof(char), stdin);
-    strncpy(d.to, strtok(str, "\n"), sizeof(d.to));
+    strcpy(d.to, strtok(str, "\n"));
 
-    printf("Amount: ");
+    printf("Amount: %i -> ", og->amount);
     fgets(str, 0xFF * sizeof(char), stdin);
     int amount = strtol(str, NULL, 10);
     d.amount = amount;
 
-    printf("Currency: ");
+    printf("Currency: %s -> ", og->currency);
     fgets(str, 0xFF * sizeof(char), stdin);
-    strncpy(d.currency, strtok(str, "\n"), sizeof(d.currency));
+    strcpy(d.currency, strtok(str, "\n"));
 
-    fh_edit_entry(index, debt_arr, d);
+    fh_edit_entry(index-1, debt_arr, d, filename);
 
     free(str);
 }
@@ -88,7 +95,7 @@ void i_handle_input(Debt * debt_arr, const char * msg, short * quit, const char 
     } else if (!strcmp(msg, "count")) {
         printf("Number of entries: %u\n", debt_count);
     } else if (!strcmp(msg, "edit")) {
-        edit(debt_arr);
+        edit(debt_arr, filename);
     } else if (!strcmp(msg, "exit")) {
         *quit = 1;
     } else {

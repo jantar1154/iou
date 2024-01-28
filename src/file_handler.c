@@ -61,6 +61,12 @@ Debt * fh_get_debt_by_id(Debt * debt_arr, const size_t index) {
 }
 
 // Edits already existing entry in file
-void fh_edit_entry(const int index, Debt * debt_arr, const Debt replace) {
-    // TODO: finish this function
+void fh_edit_entry(const int index, Debt * debt_arr, const Debt replace, const char * filename) {
+    Debt * debt_to_replace = debt_arr + index;
+    *debt_to_replace = replace;
+    FILE * debt_file = fopen(filename, "r+b");
+    int offset = sizeof(unsigned short) + sizeof(Debt) * index;
+    fseek(debt_file, offset, SEEK_SET);
+    fwrite(debt_to_replace, sizeof(Debt), 1, debt_file);
+    fclose(debt_file);
 }

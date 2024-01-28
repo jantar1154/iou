@@ -13,6 +13,6 @@ void fh_read_file(Debt * debt_arr, const char * filename);
 
 void fh_add_entry(Debt * entry, const char * filename);
 
-void fh_edit_entry(const int index, Debt * debt_arr, const Debt replace);
+void fh_edit_entry(const int index, Debt * debt_arr, const Debt replace, const char * filename);
 
 #endif // FILE_HANDLER_H
