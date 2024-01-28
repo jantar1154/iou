@@ -4,6 +4,7 @@
 #include "h/debt.h"
 
 // Checks if debt_file exists
+// @return `1` if file exists or `0` if it does not
 int fh_init_file(const char * filename) {
     FILE * debt_file = fopen(filename, "rb");
     int rtn = 1;
@@ -14,7 +15,7 @@ int fh_init_file(const char * filename) {
 
 // Creates ready empty file
 void fh_create_file(const char * filename) {
-    FILE * debt_file = fopen(filename, "wb"); // touch
+    FILE * debt_file = fopen(filename, "wb"); // "touch"
     // Initialise value for debt count
     unsigned short count = 0;
     fwrite(&count, sizeof(unsigned short), 1, debt_file);

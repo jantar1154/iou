@@ -40,6 +40,7 @@ void add(const char * filename) {
     free(str);
 }
 
+// Gets input from user to edit an entry
 void edit(Debt * debt_arr, const char * filename) {
     Debt d;
     size_t index;
