@@ -13,7 +13,9 @@ $(name): $(obj)
 	$(CC) $(args) -o $@ $^
 
 $(objdir)/%.o: $(srcdir)/%.c
+	mkdir -p $(objdir)
 	$(CC) $(args) -o $@ -c $<
 
 clean:
 	rm $(name) $(obj)
+	rmdir $(objdir)
