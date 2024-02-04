@@ -7,6 +7,7 @@
 #include "h/display.h"
 
 const char * HELP =
+    "help:\tshows this help\n"
     "list:\tlist your debts\n"
     "count:\tprints number of debts you have\n"
     "add:\tadds new entry\n"
