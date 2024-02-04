@@ -15,4 +15,6 @@ void fh_add_entry(Debt * entry, const char * filename);
 
 void fh_edit_entry(const int index, Debt * debt_arr, const Debt replace, const char * filename);
 
+void fh_remove_entry(const char * filename, Debt * debt_arr, const int index);
+
 #endif // FILE_HANDLER_H

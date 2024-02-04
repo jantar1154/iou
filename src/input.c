@@ -41,6 +41,22 @@ void add(const char * filename) {
     free(str);
 }
 
+void remove_entry(Debt * debt_arr, const char * filename) {
+    printf("Index: ");
+    char * input = malloc(sizeof(char) * 0xFF);
+    const int arr_size = fh_get_debt_count(filename);
+    fgets(input, sizeof(char) * 0xFF, stdin);
+    printf("index: %s\n", input);
+    const int index = strtol(input, NULL, 10) - 1;
+    free(input);
+    if (index+1 > arr_size) {
+        printf("Index out of range!\n");
+        return;
+    }
+
+    fh_remove_entry(filename, debt_arr, index);
+}
+
 // Gets input from user to edit an entry
 void edit(Debt * debt_arr, const char * filename) {
     Debt d;
@@ -98,6 +114,8 @@ void i_handle_input(Debt * debt_arr, const char * msg, short * quit, const char 
         printf("Number of entries: %u\n", debt_count);
     } else if (!strcmp(msg, "edit")) {
         edit(debt_arr, filename);
+    } else if (!strcmp(msg, "remove")) {
+        remove_entry(debt_arr, filename);
     } else if (!strcmp(msg, "exit")) {
         *quit = 1;
     } else {
