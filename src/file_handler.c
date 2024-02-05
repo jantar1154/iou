@@ -44,12 +44,14 @@ void fh_read_file(Debt * debt_arr, const char * filename) {
 
 void fh_add_entry(Debt * entry, const char * filename) {
     unsigned short count = fh_get_debt_count(filename) + 1;
+    const int offset = (count - 1) * sizeof(Debt) + sizeof(unsigned short);
+    
     FILE * debt_file = fopen(filename, "r+b");
     // Increase debt count number
     fwrite(&count, sizeof(unsigned short), 1, debt_file);
 
     // Append new entry
-    fseek(debt_file, 0, SEEK_END);
+    fseek(debt_file, offset, SEEK_SET);
     fwrite(entry, sizeof(Debt), 1, debt_file);
     fclose(debt_file);
 }
