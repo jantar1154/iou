@@ -37,6 +37,7 @@ void i_add(const char * filename) {
     fgets(str, sizeof(debt.currency), stdin);
     memcpy(debt.currency, strtok(str, "\n"), sizeof(debt.currency));
     fh_add_entry(&debt, filename);
+    printf("New entry successfully added!\n");
 
     free(str);
 }
@@ -46,15 +47,15 @@ void i_remove_entry(Debt * debt_arr, const char * filename) {
     char * input = malloc(sizeof(char) * 0xFF);
     const int arr_size = fh_get_debt_count(filename);
     fgets(input, sizeof(char) * 0xFF, stdin);
-    printf("index: %s\n", input);
     const int index = strtol(input, NULL, 10) - 1;
     free(input);
     if (index+1 > arr_size) {
-        printf("Index out of range!\n");
+        printf("Index %i out of range!\n", index);
         return;
     }
 
     fh_remove_entry(filename, debt_arr, index);
+    printf("Entry %i removed successfully!\n", index);
 }
 
 // Gets input from user to edit an entry

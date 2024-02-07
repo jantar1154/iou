@@ -79,7 +79,6 @@ void fh_remove_entry(const char * filename, Debt * debt_arr, const int index) {
     fseek(debt_file, 0, SEEK_SET);
     fwrite(&new_count, sizeof(unsigned short), 1, debt_file);
     // Write everything else
-    printf("after: %i\n", count_after);
     fseek(debt_file, offset, SEEK_SET);
     fwrite(arr_after, sizeof(Debt), count_after, debt_file);
     fclose(debt_file);
