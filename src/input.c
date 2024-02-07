@@ -15,7 +15,7 @@ const char * HELP =
     "exit:\texits program\n";
 
 // Handles user input to add new entry into the file
-void add(const char * filename) {
+void i_add(const char * filename) {
     char * str = malloc(0xFF);
     Debt debt;
     printf("From: ");
@@ -41,7 +41,7 @@ void add(const char * filename) {
     free(str);
 }
 
-void remove_entry(Debt * debt_arr, const char * filename) {
+void i_remove_entry(Debt * debt_arr, const char * filename) {
     printf("Index: ");
     char * input = malloc(sizeof(char) * 0xFF);
     const int arr_size = fh_get_debt_count(filename);
@@ -58,21 +58,20 @@ void remove_entry(Debt * debt_arr, const char * filename) {
 }
 
 // Gets input from user to edit an entry
-void edit(Debt * debt_arr, const char * filename) {
+void i_edit(Debt * debt_arr, const char * filename) {
     Debt d;
-    size_t index;
-    size_t max_size = fh_get_debt_count(filename);
+    const size_t max_size = fh_get_debt_count(filename);
     char * str = malloc(0xFF * sizeof(char));
     putchar('\n');
     
     printf("index: ");
     fgets(str, 0xFF * sizeof(char), stdin);
-    index = strtol(str, NULL, 10);
+    const size_t index = strtol(str, NULL, 10);
     if (index > max_size) {
         puts("Index out of range");
         return;
     }
-    Debt * og = debt_arr + index - 1;
+    const Debt * og = debt_arr + index - 1;
     
     printf("From: %s -> ", og->from);
     fgets(str, 0xFF * sizeof(char), stdin);
@@ -84,7 +83,7 @@ void edit(Debt * debt_arr, const char * filename) {
 
     printf("Amount: %i -> ", og->amount);
     fgets(str, 0xFF * sizeof(char), stdin);
-    int amount = strtol(str, NULL, 10);
+    const int amount = strtol(str, NULL, 10);
     d.amount = amount;
 
     printf("Currency: %s -> ", og->currency);
@@ -109,13 +108,13 @@ void i_handle_input(Debt * debt_arr, const char * msg, short * quit, const char 
     } else if (!strcmp(msg, "help")) {
         printf("%s", HELP);
     } else if (!strcmp(msg, "add")) {
-        add(filename);
+        i_add(filename);
     } else if (!strcmp(msg, "count")) {
         printf("Number of entries: %u\n", debt_count);
     } else if (!strcmp(msg, "edit")) {
-        edit(debt_arr, filename);
+        i_edit(debt_arr, filename);
     } else if (!strcmp(msg, "remove")) {
-        remove_entry(debt_arr, filename);
+        i_remove_entry(debt_arr, filename);
     } else if (!strcmp(msg, "exit")) {
         *quit = 1;
     } else {
