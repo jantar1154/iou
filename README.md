@@ -13,7 +13,7 @@ If your distribution does not come with any of those, install them:
 # pacman -S git gcc make
 ```
 
-## Installation
+## Installation and setup
 1. Clone the GitHub repo
 ```
 $ git clone https://github.com/jantar1154/iou
@@ -26,13 +26,21 @@ $ cd iou
 ```
 $ make
 ```
-4. Run the program
+4. Open `config.ini` file and edit the contents to your liking
+- *debtfilelocation*: a path where debt file will be saved. Make sure all folders exist!
+For example:
+```
+debtfilelocation:/home/chucknorris/.iou/debt.dat
+```
+**More available settings may be added in the future**
+5. Run the program
 ```
 $ ./iou
 ```
 > **NOTE:** 
 > Alternatively, you can pass an argument which would be path to file other than default `./debt.dat` file! \
 > For example: `$ ./iou /tmp/my_temp_debt.dat`!
+> Second argument can be your another config file.
 
 ## Usage
 You can refer to this chapter or write `help` into the prompt.

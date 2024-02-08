@@ -76,20 +76,24 @@ void i_edit(Debt * debt_arr, const char * filename) {
     
     printf("From: %s -> ", og->from);
     fgets(str, 0xFF * sizeof(char), stdin);
-    strcpy(d.from, strtok(str, "\n"));
+    if (strlen(str) == 1) strcpy(d.from, og->from);
+    else strcpy(d.from, strtok(str, "\n"));
 
     printf("To: %s -> ", og->to);
     fgets(str, 0xFF * sizeof(char), stdin);
-    strcpy(d.to, strtok(str, "\n"));
+    if (strlen(str) == 1) strcpy(d.to, og->to);
+    else strcpy(d.to, strtok(str, "\n"));
 
     printf("Amount: %i -> ", og->amount);
     fgets(str, 0xFF * sizeof(char), stdin);
-    const int amount = strtol(str, NULL, 10);
+    int amount = strtol(str, NULL, 10);
+    if (strlen(str) == 1) amount = og->amount;
     d.amount = amount;
 
     printf("Currency: %s -> ", og->currency);
     fgets(str, 0xFF * sizeof(char), stdin);
-    strcpy(d.currency, strtok(str, "\n"));
+    if (strlen(str) == 1) strcpy(d.currency, og->currency);
+    else strcpy(d.currency, strtok(str, "\n"));
 
     fh_edit_entry(index-1, debt_arr, d, filename);
 
