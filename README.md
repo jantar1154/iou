@@ -27,12 +27,12 @@ $ cd iou
 $ make
 ```
 4. Open `config.ini` file and edit the contents to your liking
-- *debtfilelocation*: a path where debt file will be saved. Make sure all folders exist!
+- *debtfilelocation*: a path where debt file will be saved. Make sure all folders exist!\
 For example:
 ```
 debtfilelocation:/home/chucknorris/.iou/debt.dat
 ```
-**More available settings may be added in the future**
+**More available settings may be added in the future**\
 5. Run the program
 ```
 $ ./iou
