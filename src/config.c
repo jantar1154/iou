@@ -33,7 +33,8 @@ void c_get_value(const char * filename, char * key, char ** dest) {
 void c_init(const char * filename) {
     FILE * config_file = fopen(filename, "r");
     if (!config_file) config_file = c_create_config_file(filename);
-    fprintf(config_file, "debtfile:debt.dat\n");
-    fprintf(config_file, "kokot:yes\n");
+
+    fputs("debtfilelocation:debt.dat", config_file);
+
     fclose(config_file);
 }

@@ -23,6 +23,7 @@ void fh_create_file(const char * filename) {
 }
 
 // Reads integer giving you number of debts in file
+// @return A number value of first two bytes in file
 unsigned short fh_get_debt_count(const char * filename) {
     FILE * debt_file = fopen(filename, "rb");
     unsigned short count;
