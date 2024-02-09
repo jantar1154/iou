@@ -4,6 +4,7 @@
 
 #include "h/config.h"
 
+// Makes new empty config file or exits the program if it couldn't
 FILE * c_create_config_file(const char * filename) {
     FILE * config_file = fopen(filename, "w");
     if (!config_file) {

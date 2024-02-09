@@ -42,6 +42,7 @@ void fh_read_file(Debt * debt_arr, const char * filename) {
     fclose(debt_file);
 }
 
+// Appends new entry into a savefile
 void fh_add_entry(Debt * entry, const char * filename) {
     unsigned short count = fh_get_debt_count(filename) + 1;
     const int offset = (count - 1) * sizeof(Debt) + sizeof(unsigned short);
@@ -67,6 +68,7 @@ void fh_edit_entry(const int index, Debt * debt_arr, const Debt replace, const c
     fclose(debt_file);
 }
 
+// Removes an entry from file by index
 void fh_remove_entry(const char * filename, Debt * debt_arr, const int index) {
     const unsigned short arr_size = fh_get_debt_count(filename);
     const int count_after = arr_size - index - 1;
