@@ -55,7 +55,7 @@ void i_remove_entry(Debt * debt_arr, const char * filename) {
     }
 
     fh_remove_entry(filename, debt_arr, index);
-    printf("Entry %i removed successfully!\n", index);
+    printf("Entry %i removed successfully!\n", index+1);
 }
 
 // Gets input from user to edit an entry
