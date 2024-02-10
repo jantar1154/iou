@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 #include "h/input.h"
 #include "h/file_handler.h"
@@ -16,17 +17,17 @@ const char * HELP =
     "exit:\texits program\n";
 
 // Handles user input to add new entry into the file
-void i_add(const char * filename) {
+void i_add(Debt * debt_arr, const char * filename) {
     char * str = malloc(0xFF);
-    Debt debt;
+    Debt debt; // Debt to add
     debt.index = fh_get_debt_count(filename);
     printf("From: ");
     fgets(str, sizeof(debt.from), stdin);
-    memcpy(debt.from, strtok(str, "\n"), sizeof(debt.from));
+    strcpy(debt.from, strtok(str, "\n"));
 
     printf("To: ");
     fgets(str, sizeof(debt.to), stdin);
-    memcpy(debt.to, strtok(str, "\n"), sizeof(debt.to));
+    strcpy(debt.to, strtok(str, "\n"));
 
     printf("Amount: ");
     char * amount_s = malloc(sizeof(char) * 0x20);
@@ -68,18 +69,18 @@ void i_remove_entry(Debt * debt_arr, const char * filename) {
 // Gets input from user to edit an entry
 void i_edit(Debt * debt_arr, const char * filename) {
     Debt d;
-    const size_t max_size = fh_get_debt_count(filename);
     char * str = malloc(0xFF * sizeof(char));
     putchar('\n');
     
     printf("index: ");
     fgets(str, 0xFF * sizeof(char), stdin);
-    const size_t index = strtol(str, NULL, 10);
-    if (index > max_size) {
+    const unsigned int index = strtol(str, NULL, 10);
+    if (!fh_index_exists(debt_arr, filename, index)) {
         puts("Index out of range");
+        free(str);
         return;
     }
-    const Debt * og = debt_arr + index;
+    const Debt * og = fh_debt_by_id(debt_arr, filename, index);
     
     printf("From: %s -> ", og->from);
     fgets(str, 0xFF * sizeof(char), stdin);
@@ -148,7 +149,7 @@ void i_handle_input(Debt * debt_arr, const char * msg, short * quit, const char 
     } else if (!strcmp(msg, "help")) {
         printf("%s", HELP);
     } else if (!strcmp(msg, "add")) {
-        i_add(filename);
+        i_add(debt_arr, filename);
     } else if (!strcmp(msg, "count")) {
         printf("Number of entries: %u\n", debt_count);
     } else if (!strcmp(msg, "edit")) {
