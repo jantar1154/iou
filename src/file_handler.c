@@ -146,7 +146,6 @@ int fh_get_last_id(const char * filename) {
     int largest = -1;
     for (int i = 0; i < count; ++i) {
         const int curr_id = (debt_arr + i)->index;
-        printf("comparing %i and %i: %i\n", curr_id, largest, curr_id > largest);
         if (curr_id > largest) largest = curr_id;
     }
     free(debt_arr);
