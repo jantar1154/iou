@@ -35,7 +35,7 @@ unsigned short fh_get_debt_count(const char * filename) {
     return count;
 }
 
-// Reads the file and populates debt_arr
+// Reads the file and populates `debt_arr`
 void fh_read_file(Debt * debt_arr, const char * filename) {
     const unsigned short arr_size = fh_get_debt_count(filename);
     FILE * debt_file = fopen(filename, "rb");
@@ -65,6 +65,7 @@ void fh_add_entry(Debt * entry, const char * filename) {
 void fh_edit_entry(const int index, Debt * debt_arr, const Debt replace, const char * filename) {
     Debt * debt_to_replace = debt_arr + index;
     *debt_to_replace = replace;
+    debt_to_replace->index = index;
     FILE * debt_file = fopen(filename, "r+b");
     const int offset = sizeof(unsigned short) + sizeof(Debt) * index;
     fseek(debt_file, offset, SEEK_SET);
@@ -75,8 +76,8 @@ void fh_edit_entry(const int index, Debt * debt_arr, const Debt replace, const c
 // Removes an entry from file by index
 void fh_remove_entry(const char * filename, Debt * debt_arr, const int index) {
     const unsigned short arr_size = fh_get_debt_count(filename);
-    const int count_after = arr_size - index - 1;
-    Debt * arr_after = debt_arr + index + 1;
+    const int count_after = arr_size - index;
+    Debt * arr_after = debt_arr + index;
     const int offset = index + sizeof(unsigned short);
     const unsigned short new_count = arr_size - 1;
 

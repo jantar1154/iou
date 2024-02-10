@@ -19,6 +19,7 @@ const char * HELP =
 void i_add(const char * filename) {
     char * str = malloc(0xFF);
     Debt debt;
+    debt.index = fh_get_debt_count(filename);
     printf("From: ");
     fgets(str, sizeof(debt.from), stdin);
     memcpy(debt.from, strtok(str, "\n"), sizeof(debt.from));
@@ -28,8 +29,8 @@ void i_add(const char * filename) {
     memcpy(debt.to, strtok(str, "\n"), sizeof(debt.to));
 
     printf("Amount: ");
-    char * amount_s = malloc(0x21);
-    fgets(amount_s, 32, stdin);
+    char * amount_s = malloc(sizeof(char) * 0x20);
+    fgets(amount_s, sizeof(char) * 0x20, stdin);
     const size_t amount_i = atoi(amount_s);
     memcpy(&debt.amount, &amount_i, sizeof(debt.amount));
     free(amount_s);
@@ -44,13 +45,18 @@ void i_add(const char * filename) {
 }
 
 void i_remove_entry(Debt * debt_arr, const char * filename) {
-    printf("Index: ");
     char * input = malloc(sizeof(char) * 0xFF);
     const int arr_size = fh_get_debt_count(filename);
+    if (arr_size <= 0) {
+        fputs("No entries found. Nothing to remove\n", stderr);
+        free(input);
+        return;
+    }
+    printf("Index: ");
     fgets(input, sizeof(char) * 0xFF, stdin);
-    const int index = strtol(input, NULL, 10) - 1;
+    const int index = strtol(input, NULL, 10);
     free(input);
-    if (index+1 > arr_size) {
+    if (index > arr_size) {
         printf("Index %i out of range!\n", index);
         return;
     }
@@ -73,7 +79,7 @@ void i_edit(Debt * debt_arr, const char * filename) {
         puts("Index out of range");
         return;
     }
-    const Debt * og = debt_arr + index - 1;
+    const Debt * og = debt_arr + index;
     
     printf("From: %s -> ", og->from);
     fgets(str, 0xFF * sizeof(char), stdin);
@@ -96,7 +102,7 @@ void i_edit(Debt * debt_arr, const char * filename) {
     if (strlen(str) == 1) strcpy(d.currency, og->currency);
     else strcpy(d.currency, strtok(str, "\n"));
 
-    fh_edit_entry(index-1, debt_arr, d, filename);
+    fh_edit_entry(index, debt_arr, d, filename);
 
     free(str);
 }
