@@ -9,6 +9,7 @@
 const char * HELP =
     "help:\tshows this help\n"
     "list:\tlist your debts\n"
+    "query:\tlists debts matching a search\n"
     "count:\tprints number of debts you have\n"
     "add:\tadds new entry\n"
     "edit:\tedits existing entry\n"
@@ -100,6 +101,34 @@ void i_edit(Debt * debt_arr, const char * filename) {
     free(str);
 }
 
+void i_query(const char * filename, Debt * debt_arr) {
+    const int count = fh_get_debt_count(filename);
+    char * input = malloc(sizeof(char) * 0xFF);
+    const char * txt =
+        "Search for:\n"
+        "1: From\n"
+        "2: To\n"
+        "3: Amount\n"
+        "4: Currency\n";
+
+    printf("%s\nSelect: ", txt);
+    fgets(input, sizeof(char) * 0xFF, stdin);
+    const int pick = strtol(input, NULL, 10);
+    if (pick < 1 || pick > 4) {
+        fprintf(stderr, "Selection %i is invalid. Use numbers 1 - 4\n", pick);
+    }
+
+    printf("Search: ");
+    fgets(input, sizeof(char) * 0xFF, stdin);
+    const char * search = strtok(input, "\n");
+
+    unsigned int res_size = 0;
+    Debt * result = fh_query(debt_arr, count, pick, search, &res_size);
+    d_print_debts(result, res_size);
+    free(result);
+    free(input);
+}
+
 // Handles input commands
 void i_handle_input(Debt * debt_arr, const char * msg, short * quit, const char * filename) {
     unsigned short debt_count = fh_get_debt_count(filename);
@@ -118,11 +147,13 @@ void i_handle_input(Debt * debt_arr, const char * msg, short * quit, const char 
         printf("Number of entries: %u\n", debt_count);
     } else if (!strcmp(msg, "edit")) {
         i_edit(debt_arr, filename);
+    } else if (!strcmp(msg, "query")) {
+        i_query(filename, debt_arr);
     } else if (!strcmp(msg, "remove")) {
         i_remove_entry(debt_arr, filename);
     } else if (!strcmp(msg, "exit")) {
         *quit = 1;
     } else {
-        printf("Invalid command\n");
+        puts("Invalid command");
     }
 }

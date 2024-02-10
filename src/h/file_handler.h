@@ -17,4 +17,6 @@ void fh_edit_entry(const int index, Debt * debt_arr, const Debt replace, const c
 
 void fh_remove_entry(const char * filename, Debt * debt_arr, const int index);
 
+Debt * fh_query(Debt * debt_arr, int count, int query_type, const char * search, unsigned int * res_size);
+
 #endif // FILE_HANDLER_H

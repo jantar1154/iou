@@ -1,6 +1,9 @@
-#include "h/file_handler.h"
 #include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+#include <string.h>
 
+#include "h/file_handler.h"
 #include "h/debt.h"
 
 // Checks if debt_file exists
@@ -85,4 +88,34 @@ void fh_remove_entry(const char * filename, Debt * debt_arr, const int index) {
     fseek(debt_file, offset, SEEK_SET);
     fwrite(arr_after, sizeof(Debt), count_after, debt_file);
     fclose(debt_file);
+}
+
+bool fh_q_compare(const Debt * debt, const char * search, int query_type) {
+    switch(query_type) {
+        case 1:
+            return 0 == strcmp(search, debt->from);
+        case 2:
+            return 0 == strcmp(search, debt->to);
+        case 3:
+            const int search_int = strtol(search, NULL, 10);
+            return search_int == debt->amount;
+        case 4:
+            return 0 == strcmp(search, debt->currency);
+        default:
+            return false;
+    }
+}
+
+Debt * fh_query(Debt * debt_arr, int count, int query_type, const char * search, unsigned int * res_size) {
+    Debt * result_arr = malloc(sizeof(Debt) * count);
+    unsigned int result_size = 0;
+    for (int i = 0; i < count; ++i) {
+        const Debt * d = debt_arr + i;
+        bool should_add = fh_q_compare(d, search, query_type);
+        if (!should_add) continue;
+        memcpy(result_arr + result_size, d, sizeof(Debt));
+        result_size ++;
+    }
+    memcpy(res_size, &result_size, sizeof(unsigned int));
+    return result_arr;
 }

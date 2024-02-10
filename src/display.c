@@ -12,7 +12,7 @@ void d_print_line() {
 }
 
 // Prints out every debt from `debt_arr`
-void d_print_debts(Debt * debt_arr, int debt_count) {
+void d_print_debts(const Debt * debt_arr, int debt_count) {
     for (int i = 0; i < debt_count; i++) {
         Debt * d = debt_arr + i;
         d_print_line();
