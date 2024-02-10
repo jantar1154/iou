@@ -12,12 +12,12 @@ void d_print_line() {
 }
 
 // Prints out every debt from `debt_arr`
-void d_print_debts(const Debt * debt_arr, int debt_count) {
+void d_print_debts(Debt * debt_arr, int debt_count) {
     for (int i = 0; i < debt_count; i++) {
         Debt * d = debt_arr + i;
         d_print_line();
-        printf("[%i]\nFrom:\t%s\nTo:\t%s\nAmount:\t%i %s\n",
-            i+1, d->from, d->to, d->amount, d->currency
+        printf("[%u]\nFrom:\t%s\nTo:\t%s\nAmount:\t%i %s\n",
+            d->index, d->from, d->to, d->amount, d->currency
         );
     }
     d_print_line();
