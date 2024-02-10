@@ -90,6 +90,8 @@ void fh_remove_entry(const char * filename, Debt * debt_arr, const int index) {
     fclose(debt_file);
 }
 
+// Compares `search` with it's corresponding value from `debt` based on `query_type`
+// @return `true` if `debt` has the same value as `search`, otherwise `false`
 bool fh_q_compare(const Debt * debt, const char * search, int query_type) {
     switch(query_type) {
         case 1:
@@ -106,6 +108,8 @@ bool fh_q_compare(const Debt * debt, const char * search, int query_type) {
     }
 }
 
+// Searches for entries from `debt_arr` matching `search`
+// @return An array of matching entries from `debt_arr`
 Debt * fh_query(Debt * debt_arr, int count, int query_type, const char * search, unsigned int * res_size) {
     Debt * result_arr = malloc(sizeof(Debt) * count);
     unsigned int result_size = 0;
