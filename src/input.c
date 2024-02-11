@@ -40,7 +40,7 @@ void i_add(Debt * debt_arr, const char * filename) {
     fgets(str, sizeof(debt.currency), stdin);
     memcpy(debt.currency, strtok(str, "\n"), sizeof(debt.currency));
     fh_add_entry(&debt, filename);
-    printf("New entry successfully added!\n");
+    puts(C_GREEN "New entry successfully added!" C_RESET);
 
     free(str);
 }
@@ -49,7 +49,7 @@ void i_remove_entry(Debt * debt_arr, const char * filename) {
     char * input = malloc(sizeof(char) * 0xFF);
     const int arr_size = fh_get_debt_count(filename);
     if (arr_size <= 0) {
-        fputs("No entries found. Nothing to remove\n", stderr);
+        puts(C_YELLOW "No entries found. Nothing to remove" C_RESET);
         free(input);
         return;
     }
@@ -57,13 +57,13 @@ void i_remove_entry(Debt * debt_arr, const char * filename) {
     fgets(input, sizeof(char) * 0xFF, stdin);
     const int index = strtol(input, NULL, 10);
     free(input);
-    if (index > arr_size) {
-        printf("Index %i out of range!\n", index);
+    if (index > fh_get_last_id(filename)) {
+        printf(C_RED "Index %i out of range!" C_RESET "\n", index);
         return;
     }
 
     fh_remove_entry(filename, debt_arr, index);
-    printf("Entry %i removed successfully!\n", index);
+    printf(C_GREEN "Entry %i removed successfully!" C_RESET "\n", index);
 }
 
 // Gets input from user to edit an entry
@@ -106,6 +106,7 @@ void i_edit(Debt * debt_arr, const char * filename) {
     fh_edit_entry(index, debt_arr, d, filename);
 
     free(str);
+    puts(C_GREEN "Entry edited successfully!" C_RESET);
 }
 
 void i_query(const char * filename, Debt * debt_arr) {
@@ -122,7 +123,10 @@ void i_query(const char * filename, Debt * debt_arr) {
     fgets(input, sizeof(char) * 0xFF, stdin);
     const int pick = strtol(input, NULL, 10);
     if (pick < 1 || pick > 4) {
-        fprintf(stderr, "Selection %i is invalid. Use numbers 1 - 4\n", pick);
+        fprintf(stderr, C_RED
+            "Selection %i is invalid. Use numbers 1 - 4" C_RESET "\n", pick);
+        free(input);
+        return;
     }
 
     printf("Search: ");
@@ -137,21 +141,22 @@ void i_query(const char * filename, Debt * debt_arr) {
 }
 
 // Handles input commands
-void i_handle_input(Debt * debt_arr, const char * msg, short * quit, const char * filename) {
+void i_handle_input(
+Debt * debt_arr, const char * msg, short * quit, const char * filename) {
     unsigned short debt_count = fh_get_debt_count(filename);
     if (!strcmp(msg, "list")) {
         if (debt_count) {
             fh_read_file(debt_arr, filename);
             d_print_debts(debt_arr, debt_count);
         } else {
-            puts("No entries found");
+            puts(C_YELLOW "No entries found" C_RESET);
         }
     } else if (!strcmp(msg, "help")) {
-        printf("%s", HELP);
+        printf("\n%s\n", HELP);
     } else if (!strcmp(msg, "add")) {
         i_add(debt_arr, filename);
     } else if (!strcmp(msg, "count")) {
-        printf("Number of entries: %u\n", debt_count);
+        printf("Number of entries: " C_YELLOW "%u\n" C_RESET, debt_count);
     } else if (!strcmp(msg, "edit")) {
         i_edit(debt_arr, filename);
     } else if (!strcmp(msg, "query")) {
@@ -161,6 +166,6 @@ void i_handle_input(Debt * debt_arr, const char * msg, short * quit, const char 
     } else if (!strcmp(msg, "exit")) {
         *quit = 1;
     } else {
-        puts("Invalid command");
+        puts(C_RED "Invalid command" C_RESET);
     }
 }
