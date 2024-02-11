@@ -42,7 +42,11 @@ void fh_read_file(Debt * debt_arr, const char * filename) {
     // Offset it to not read debt count
     fseek(debt_file, sizeof(unsigned short), SEEK_SET);
     // Populate `debt_arr`
-    for (size_t i = 0; i < arr_size && fread(debt_arr+i, sizeof(Debt), 1, debt_file); ++i);
+    for (
+        size_t i = 0;
+        i < arr_size && fread(debt_arr+i, sizeof(Debt), 1, debt_file);
+        ++i
+    );
     fclose(debt_file);
 }
 
@@ -66,7 +70,11 @@ void fh_add_entry(Debt * entry, const char * filename) {
 }
 
 // Edits already existing entry in file
-void fh_edit_entry(unsigned int index, Debt * debt_arr, const Debt replace, const char * filename) {
+void fh_edit_entry(
+unsigned int index,
+Debt * debt_arr,
+const Debt replace,
+const char * filename) {
     Debt * debt_to_replace = fh_debt_by_id(debt_arr, filename, index);
     memcpy(debt_to_replace, &replace, sizeof(Debt));
     debt_to_replace->index = index;
@@ -96,7 +104,8 @@ void fh_remove_entry(const char * filename, Debt * debt_arr, const int index) {
     fclose(debt_file);
 }
 
-// Compares `search` with it's corresponding value from `debt` based on `query_type`
+// Compares `search` with it's corresponding value from `debt`
+// based on `query_type`
 // @return `true` if `debt` has the same value as `search`, otherwise `false`
 bool fh_q_compare(const Debt * debt, const char * search, int query_type) {
     switch(query_type) {
@@ -114,7 +123,10 @@ bool fh_q_compare(const Debt * debt, const char * search, int query_type) {
     }
 }
 
-bool fh_index_exists(Debt * debt_arr, const char * filename, unsigned int index) {
+bool fh_index_exists(
+Debt * debt_arr,
+const char * filename,
+unsigned int index) {
     const unsigned int count = fh_get_debt_count(filename);
     if (index < 0) return false;
     for (int i = 0; i < count; ++i) {
@@ -127,8 +139,12 @@ bool fh_index_exists(Debt * debt_arr, const char * filename, unsigned int index)
 }
 
 // Finds a debt in `debt_arr` whose index is `index`
-// @return An array to first found debt with the right index or NULL if none was found
-Debt * fh_debt_by_id(Debt * debt_arr, const char * filename, unsigned int index) {
+// @return An array to first found debt with the right index
+// @return or NULL if none was found
+Debt * fh_debt_by_id(
+Debt * debt_arr,
+const char * filename,
+unsigned int index) {
     const unsigned int count = fh_get_debt_count(filename);
     for (int i = 0; i < count; ++i) {
         Debt * d = debt_arr + i;
@@ -154,8 +170,12 @@ int fh_get_last_id(const char * filename) {
 
 // Searches for entries from `debt_arr` matching `search`
 // @return An array of matching entries from `debt_arr`
-// @param res_size will be modified to contain amount of entries in return value
-Debt * fh_query(Debt * debt_arr, int count, int query_type, const char * search, unsigned int * res_size) {
+Debt * fh_query(
+Debt * debt_arr,
+int count,
+int query_type,
+const char * search,
+unsigned int * res_size) {
     Debt * result_arr = malloc(sizeof(Debt) * count);
     unsigned int result_size = 0;
     for (int i = 0; i < count; ++i) {

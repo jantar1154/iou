@@ -6,6 +6,7 @@
 #include "h/file_handler.h"
 #include "h/debt.h"
 #include "h/config.h"
+#include "h/display.h"
 
 int main(int argc, char ** argv) {
     char * debt_fn = "./debt.dat";
@@ -16,6 +17,9 @@ int main(int argc, char ** argv) {
 
     // Init configuration file
     c_init(config_fn);
+
+    // Show copyright
+    puts(C_BLUE "iou " C_YELLOW "Copyright (C) 2024 jantar1154" C_RESET);
 
     char * command = malloc(0xFF * sizeof(char));
 
@@ -31,12 +35,15 @@ int main(int argc, char ** argv) {
     // Prompt loop
     while (!quit) {
         debt_arr = realloc(debt_arr, sizeof(Debt) * fh_get_debt_count(debt_fn));
-        fprintf(stdout, "iou > ");
+        printf("iou > ");
         fgets(command, 0xFF * sizeof(char), stdin);
         if (strlen(command) <= 1) continue;
         command = strtok(command, "\n");
         i_handle_input(debt_arr, command, &quit, debt_fn);
     }
+
+    puts("Exiting " C_YELLOW "iou" C_RESET ". Goodbye!");
+
     free(debt_arr);
     free(command);
     free(val);
