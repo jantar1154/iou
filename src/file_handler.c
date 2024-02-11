@@ -7,8 +7,8 @@
 #include "h/debt.h"
 
 // Checks if debt_file exists
-// @return `1` if file exists or `0` if it does not
-int fh_init_file(const char * filename) {
+// @return `true` if file exists or `false` if it does not
+bool fh_init_file(const char * filename) {
     FILE * debt_file = fopen(filename, "rb");
     int rtn = 1;
     if (!debt_file) rtn = 0;
@@ -154,6 +154,7 @@ int fh_get_last_id(const char * filename) {
 
 // Searches for entries from `debt_arr` matching `search`
 // @return An array of matching entries from `debt_arr`
+// @param res_size will be modified to contain amount of entries in return value
 Debt * fh_query(Debt * debt_arr, int count, int query_type, const char * search, unsigned int * res_size) {
     Debt * result_arr = malloc(sizeof(Debt) * count);
     unsigned int result_size = 0;

@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include "debt.h"
 
-int fh_init_file(const char * filename);
+bool fh_init_file(const char * filename);
 
 void fh_create_file(const char * filename);
 
