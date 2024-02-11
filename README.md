@@ -60,3 +60,16 @@ You can refer to this chapter or write `help` into the prompt.
 - **add**:   adds a new entry
 - **edit**:  edits an existing entry
 - **exit**:  exits the program
+
+### 3.2 Please note:
+My command line input does not currently support arrow keys for looking back.
+
+Also write commands exactly as they are, no whitespaces and such.
+
+## 4. Roadmap
+1. Able to edit configuration file from the program itself
+2. Add **git** support (not sure if I want to do it)
+3. Drastically improve saving/query system *or* completely switch to **sqlite**
+4. Switch to **curses** or improve the TUI and commands system
+
+Your ideas are welcome in *issues*. You can alternatively open a pull request!
