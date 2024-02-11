@@ -7,8 +7,8 @@
 #include "h/debt.h"
 
 // Checks if debt_file exists
-// @return `1` if file exists or `0` if it does not
-int fh_init_file(const char * filename) {
+// @return `true` if file exists or `false` if it does not
+bool fh_init_file(const char * filename) {
     FILE * debt_file = fopen(filename, "rb");
     int rtn = 1;
     if (!debt_file) rtn = 0;
