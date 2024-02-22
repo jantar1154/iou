@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ncurses.h>
 
 #include "h/input.h"
 #include "h/file_handler.h"
@@ -15,11 +16,18 @@ int main(int argc, char ** argv) {
     if (argc > 2) config_fn = argv[2];
     short quit = 0;
 
-    // Init configuration file
+    // Init
     c_init(config_fn);
-
-    // Show copyright
-    puts(C_BLUE "iou " C_YELLOW "Copyright (C) 2024 jantar1154" C_RESET);
+    initscr();
+    
+    // Title text
+    const char * title_text = "IOU - Copyright (C) 2024 jantar1154\n";
+    unsigned int max_x, max_y;
+    getmaxyx(stdscr, max_y, max_x);
+    attron(A_BOLD | A_ITALIC);
+    mvprintw(0, max_x/2 - strlen(title_text)/2, title_text);
+    refresh();
+    attroff(A_BOLD | A_ITALIC);
 
     char * command = malloc(0xFF * sizeof(char));
 
@@ -34,19 +42,27 @@ int main(int argc, char ** argv) {
 
     // Prompt loop
     while (!quit) {
+
         debt_arr = realloc(debt_arr, sizeof(Debt) * fh_get_debt_count(debt_fn));
-        printf("iou > ");
-        fgets(command, 0xFF * sizeof(char), stdin);
+
+        // Text input located at the bottom
+        move(max_y-1, 0);
+        clrtoeol();
+        printw("iou > ");
+        
+        getnstr(command, 0xFF * sizeof(char));
         if (strlen(command) <= 1) continue;
         command = strtok(command, "\n");
         i_handle_input(debt_arr, command, &quit, debt_fn);
+        refresh();
     }
-
-    puts("Exiting " C_YELLOW "iou" C_RESET ". Goodbye!");
 
     free(debt_arr);
     free(command);
     free(val);
+
+    refresh();
+    endwin();
 
     return 0;
 }

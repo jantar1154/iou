@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <ncurses.h>
 
 #include "h/input.h"
 #include "h/file_handler.h"
@@ -144,6 +145,7 @@ void i_query(const char * filename, Debt * debt_arr) {
 void i_handle_input(
 Debt * debt_arr, const char * msg, short * quit, const char * filename) {
     unsigned short debt_count = fh_get_debt_count(filename);
+    bool invalid = false;
     if (!strcmp(msg, "list")) {
         if (debt_count) {
             fh_read_file(debt_arr, filename);
@@ -152,10 +154,13 @@ Debt * debt_arr, const char * msg, short * quit, const char * filename) {
             puts(C_YELLOW "No entries found" C_RESET);
         }
     } else if (!strcmp(msg, "help")) {
-        printf("\n%s\n", HELP);
+        char str[0xFF];
+        sprintf(str, "\n%s\n", HELP);
+        d_print_cmd_output(str);
     } else if (!strcmp(msg, "add")) {
         i_add(debt_arr, filename);
     } else if (!strcmp(msg, "count")) {
+        d_print_cmd_output("sex drogy levy horni roh");
         printf("Number of entries: " C_YELLOW "%u\n" C_RESET, debt_count);
     } else if (!strcmp(msg, "edit")) {
         i_edit(debt_arr, filename);
@@ -166,6 +171,7 @@ Debt * debt_arr, const char * msg, short * quit, const char * filename) {
     } else if (!strcmp(msg, "exit")) {
         *quit = 1;
     } else {
-        puts(C_RED "Invalid command" C_RESET);
+        invalid = true;
     }
+    d_last_cmd(invalid ? "Invalid command" : msg);
 }

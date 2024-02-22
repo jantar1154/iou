@@ -70,6 +70,6 @@ Also write commands exactly as they are, no whitespaces and such.
 1. Able to edit configuration file from the program itself
 2. Add **git** support (not sure if I want to do it)
 3. Drastically improve saving/query system *or* completely switch to **sqlite**
-4. Switch to **curses** or improve the TUI and commands system
+4. Switch to **ncurses** or improve the TUI and commands system
 
 Your ideas are welcome in *issues*. You can alternatively open a pull request!

@@ -11,4 +11,12 @@
 
 void d_print_debts(Debt * debt_arr, int debt_count);
 
+void d_last_cmd(const char * cmd_str);
+
+void d_last_del();
+
+void d_print_cmd_output(const char * output);
+
+void d_clear_cmd_output();
+
 #endif // DISPLAY_H
