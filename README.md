@@ -6,16 +6,16 @@ And it even saves everything into a file!
 PRs and issues are welcome!
 
 ## 1. Dependencies
-You will need `git` for cloning the repo and `gcc` and `make` for building *iou*. \
-If your linux distribution does not come with any of those, install them:
+You will need `git` for cloning the repo and `gcc` and `make` for building *iou* and `ncurses`. \
+Your linux distribution might not come with any of those, so install them:
 
-**1.1. Debian**:
+**1.1. Apt**:
 ```
-# apt install git gcc make
+# apt install git gcc make ncurses
 ```
-**1.2. Arch**:
+**1.2. Pacman**:
 ```
-# pacman -S git gcc make
+# pacman -S git gcc make ncurses
 ```
 
 ## 2. Installation and setup
