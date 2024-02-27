@@ -42,7 +42,6 @@ int main(int argc, char ** argv) {
 
     // Prompt loop
     while (!quit) {
-
         debt_arr = realloc(debt_arr, sizeof(Debt) * fh_get_debt_count(debt_fn));
 
         // Text input located at the bottom

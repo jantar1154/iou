@@ -19,29 +19,32 @@ const char * HELP =
 
 // Handles user input to add new entry into the file
 void i_add(Debt * debt_arr, const char * filename) {
-    char * str = malloc(0xFF);
+    const size_t str_size = 0xFF;
+    char * str = malloc(sizeof(char) * str_size);
+
     Debt debt; // Debt to add
     debt.index = fh_get_debt_count(filename);
-    printf("From: ");
-    fgets(str, sizeof(debt.from), stdin);
+    d_print_cmd_output("Create new entry:\n");
+    printw("From: ");
+    getnstr(str, str_size);
     strcpy(debt.from, strtok(str, "\n"));
 
-    printf("To: ");
-    fgets(str, sizeof(debt.to), stdin);
+    printw("To: ");
+    getnstr(str, str_size);
     strcpy(debt.to, strtok(str, "\n"));
 
-    printf("Amount: ");
+    printw("Amount: ");
     char * amount_s = malloc(sizeof(char) * 0x20);
-    fgets(amount_s, sizeof(char) * 0x20, stdin);
+    getnstr(amount_s, 0x20);
     const size_t amount_i = atoi(amount_s);
     memcpy(&debt.amount, &amount_i, sizeof(debt.amount));
     free(amount_s);
 
-    printf("Currency: ");
-    fgets(str, sizeof(debt.currency), stdin);
+    printw("Currency: ");
+    getnstr(str, str_size);
     memcpy(debt.currency, strtok(str, "\n"), sizeof(debt.currency));
     fh_add_entry(&debt, filename);
-    puts(C_GREEN "New entry successfully added!" C_RESET);
+    d_print_cmd_output("New entry successfully added!");
 
     free(str);
 }
@@ -151,7 +154,7 @@ Debt * debt_arr, const char * msg, short * quit, const char * filename) {
             fh_read_file(debt_arr, filename);
             d_print_debts(debt_arr, debt_count);
         } else {
-            puts(C_YELLOW "No entries found" C_RESET);
+            d_print_cmd_output("No entries found!");
         }
     } else if (!strcmp(msg, "help")) {
         char str[0xFF];
@@ -160,8 +163,10 @@ Debt * debt_arr, const char * msg, short * quit, const char * filename) {
     } else if (!strcmp(msg, "add")) {
         i_add(debt_arr, filename);
     } else if (!strcmp(msg, "count")) {
-        d_print_cmd_output("sex drogy levy horni roh");
-        printf("Number of entries: " C_YELLOW "%u\n" C_RESET, debt_count);
+        char *str = malloc(sizeof(char) * 0x40);
+        snprintf(str, sizeof(char) * 0x40, "Number of entries: %i", debt_count);
+        d_print_cmd_output(str);
+        free(str);
     } else if (!strcmp(msg, "edit")) {
         i_edit(debt_arr, filename);
     } else if (!strcmp(msg, "query")) {
