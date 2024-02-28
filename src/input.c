@@ -15,6 +15,7 @@ const char * HELP =
     "count:\tprints number of debts you have\n"
     "add:\tadds new entry\n"
     "edit:\tedits existing entry\n"
+    "clear:\tclears the screen\n"
     "exit:\texits program\n";
 
 // Handles user input to add new entry into the file
@@ -147,14 +148,14 @@ void i_query(const char * filename, Debt * debt_arr) {
 // Handles input commands
 void i_handle_input(
 Debt * debt_arr, const char * msg, short * quit, const char * filename) {
-    unsigned short debt_count = fh_get_debt_count(filename);
+    const unsigned short debt_count = fh_get_debt_count(filename);
     bool invalid = false;
     if (!strcmp(msg, "list")) {
-        if (debt_count) {
+        if (!debt_count) {
+            d_print_cmd_output("No entries found!");
+        } else {
             fh_read_file(debt_arr, filename);
             d_print_debts(debt_arr, debt_count);
-        } else {
-            d_print_cmd_output("No entries found!");
         }
     } else if (!strcmp(msg, "help")) {
         char str[0xFF];
@@ -175,6 +176,8 @@ Debt * debt_arr, const char * msg, short * quit, const char * filename) {
         i_remove_entry(debt_arr, filename);
     } else if (!strcmp(msg, "exit")) {
         *quit = 1;
+    } else if (!strcmp(msg, "clear")) {
+        d_clear_cmd_output();
     } else {
         invalid = true;
     }

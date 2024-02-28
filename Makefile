@@ -10,11 +10,11 @@ obj = $(src:$(srcdir)/%.c=$(objdir)/%.o)
 ######
 
 $(name): $(obj)
-	$(CC) $(args) -o $@ $^ &
+	$(CC) $(args) -o $@ $^
 
 $(objdir)/%.o: $(srcdir)/%.c
 	mkdir -p $(objdir)
-	$(CC) $(args) -o $@ -c $< &
+	$(CC) $(args) -o $@ -c $<
 
 clean:
 	rm $(name) $(obj)
