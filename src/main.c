@@ -24,8 +24,7 @@ int main(int argc, char ** argv) {
     
     // Title text
     const char * title_text = "IOU - Copyright (C) 2024 jantar1154\n";
-    unsigned int max_x, max_y;
-    getmaxyx(stdscr, max_y, max_x);
+    const unsigned int max_x = getmaxx(stdscr);
     attron(A_BOLD | A_ITALIC);
     mvprintw(0, max_x/2 - strlen(title_text)/2, title_text);
     refresh();
@@ -47,7 +46,7 @@ int main(int argc, char ** argv) {
         debt_arr = realloc(debt_arr, sizeof(Debt) * fh_get_debt_count(debt_fn));
 
         // Text input located at the bottom
-        move(max_y-1, 0);
+        move(getmaxy(stdscr)-1, OUT_MIN_X);
         clrtoeol();
         printw("iou > ");
         

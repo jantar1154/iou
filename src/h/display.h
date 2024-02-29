@@ -9,7 +9,9 @@
 #define C_BLUE    "\x1b[34m"
 #define C_RESET   "\x1b[0m"
 
-void d_print_debts(Debt * debt_arr, const int debt_count);
+#define OUT_MIN_X 1
+
+void d_print_debts(Debt * debt_arr, const int page, const int debt_count);
 
 void d_last_cmd(const char * cmd_str);
 

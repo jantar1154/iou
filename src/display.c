@@ -7,10 +7,9 @@
 
 #define LINE_W 24
 
-#define OUT_MIN_X 1     // Don't change
 #define OUT_MIN_Y 3
-#define LAST_Y_OFFSET 2
-#define Y_SIZE 5        // how many lines one entry takes up
+#define LAST_Y_OFFSET 2 // Where last command should be printed
+#define Y_SIZE 5        // How many lines one entry takes up
 
 // Prints a line
 void d_print_line() {
@@ -21,16 +20,15 @@ void d_print_line() {
 }
 
 // Prints out every debt from `debt_arr`
-// TODO: Handle scrolling here!
-// IDEA: use up/down arrow keys or J\K to scroll
-void d_print_debts(Debt * debt_arr, const int debt_count) {
+void d_print_debts(Debt * debt_arr, const int page, const int debt_count) {
     const unsigned int free_y = getmaxy(stdscr) - OUT_MIN_Y - 3;
     // How many entries can you possibly see due to terminal height
     const unsigned short entries_per_page = free_y / Y_SIZE;
     d_clear_cmd_output();
     for (int i = 0; i < min(entries_per_page, debt_count); i++) {
         move(i * Y_SIZE + OUT_MIN_Y, OUT_MIN_X);
-        Debt * d = debt_arr + i;
+        if (debt_count <= i + (page-1) * entries_per_page) break;
+        Debt * d = debt_arr + i + (page-1) * entries_per_page;
         d_print_line();
         char *str = malloc(sizeof(char) * 0xFF);
 
@@ -52,21 +50,27 @@ void d_print_debts(Debt * debt_arr, const int debt_count) {
         free(str);
     }
     printw("\n");
-    d_print_line();
     if (debt_count > entries_per_page) {
-        d_message("More pages available! Type page <number> to see them.");
+        char * str = malloc(0xFF * sizeof(char));
+        snprintf(
+            str, 0xFF * sizeof(char),
+            "More pages available! Type \"list <1 - %i>\" to see them.",
+            1 + debt_count / entries_per_page
+        );
+        d_message(str);
+        free(str);
     }
 }
 
 // Prints last command on (max_y - 2) using ncurses
 void d_last_cmd(const char * cmd_str) {
     d_last_del();
-    mvprintw(getmaxy(stdscr)-LAST_Y_OFFSET, 0, cmd_str);
+    mvprintw(getmaxy(stdscr)-LAST_Y_OFFSET, OUT_MIN_X, cmd_str);
 }
 
 // Clears the last command printed in `d_last_cmd()`
 void d_last_del() {
-    move(getmaxy(stdscr)-LAST_Y_OFFSET, 0);
+    move(getmaxy(stdscr)-LAST_Y_OFFSET, OUT_MIN_X);
     clrtoeol();
 }
 
@@ -84,7 +88,8 @@ void d_clear_cmd_output() {
     }
 }
 
-// Prints, using ncurses, an additional message not necessarily meaning something went wrong
+// Prints, using ncurses, an additional message
+// not necessarily meaning something went wrong
 // Text will appear at MAX_Y - 3
 void d_message(const char * message) {
     move(getmaxy(stdscr) - 3, OUT_MIN_X);

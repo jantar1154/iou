@@ -7,6 +7,7 @@
 #include "h/input.h"
 #include "h/file_handler.h"
 #include "h/display.h"
+#include "h/util.h"
 
 const char * HELP =
     "help:\tshows this help\n"
@@ -140,22 +141,24 @@ void i_query(const char * filename, Debt * debt_arr) {
 
     unsigned int res_size = 0;
     Debt * result = fh_query(debt_arr, count, pick, search, &res_size);
-    d_print_debts(result, res_size);
+    d_print_debts(result, 0, res_size);
     free(result);
     free(input);
 }
 
 // Handles input commands
 void i_handle_input(
-Debt * debt_arr, const char * msg, short * quit, const char * filename) {
+Debt * debt_arr, char * msg, short * quit, const char * filename) {
     const unsigned short debt_count = fh_get_debt_count(filename);
     bool invalid = false;
-    if (!strcmp(msg, "list")) {
+    if (!strcmp(strtok(msg, " "), "list")) {
         if (!debt_count) {
             d_print_cmd_output("No entries found!");
         } else {
             fh_read_file(debt_arr, filename);
-            d_print_debts(debt_arr, debt_count);
+            char * page = strtok(NULL, "\n");
+            if (!page) page = "1";
+            d_print_debts(debt_arr, max(1, strtol(page, NULL, 10)), debt_count);
         }
     } else if (!strcmp(msg, "help")) {
         char str[0xFF];
