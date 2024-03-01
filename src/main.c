@@ -20,7 +20,6 @@ int main(int argc, char ** argv) {
     c_init(config_fn);
     initscr();
     raw();
-    keypad(stdscr, true);
     
     // Title text
     const char * title_text = "IOU - Copyright (C) 2024 jantar1154\n";
