@@ -22,7 +22,7 @@ const char * HELP =
 
 static int open_text = 0;
 unsigned int res_size = 0;
-Debt * result;
+static Debt * result;
 
 // Handles user input to add new entry into the file
 void i_add(Debt * debt_arr, const char * filename) {
@@ -60,21 +60,27 @@ void i_remove_entry(Debt * debt_arr, const char * filename) {
     char * input = malloc(sizeof(char) * 0xFF);
     const int arr_size = fh_get_debt_count(filename);
     if (arr_size <= 0) {
-        puts(C_YELLOW "No entries found. Nothing to remove" C_RESET);
+        d_print_cmd_output("No entries found. Nothing to remove");
         free(input);
         return;
     }
-    printf("Index: ");
-    fgets(input, sizeof(char) * 0xFF, stdin);
+    d_print_cmd_output("Index: ");
+    getnstr(input, 0xFF);
     const int index = strtol(input, NULL, 10);
     free(input);
     if (index > fh_get_last_id(filename)) {
-        printf(C_RED "Index %i out of range!" C_RESET "\n", index);
+        char * str = malloc(sizeof(char) * 0xFF);
+        snprintf(str, 0xFF, "Index %i out of range!", index);
+        d_print_cmd_output(str);
+        free(str);
         return;
     }
 
     fh_remove_entry(filename, debt_arr, index);
-    printf(C_GREEN "Entry %i removed successfully!" C_RESET "\n", index);
+    char * str = malloc(sizeof(char) * 0xFF);
+    snprintf(str, 0xFF, "Entry %i removed successfully!", index);
+    d_print_cmd_output(str);
+    free(str);
 }
 
 // Gets input from user to edit an entry
