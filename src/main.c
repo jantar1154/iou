@@ -21,13 +21,8 @@ int main(int argc, char ** argv) {
     initscr();
     
     // Title text
-    const char * title_text = "IOU - Copyright (C) 2024 jantar1154\n";
-    const unsigned int max_x = getmaxx(stdscr);
-    attron(A_BOLD | A_ITALIC);
-    mvprintw(0, max_x/2 - strlen(title_text)/2, title_text);
-    refresh();
-    attroff(A_BOLD | A_ITALIC);
-
+    d_print_center(0, "IOU - A debt management CLI application");
+    d_print_center(1, "Copyright (C) 2024 jantar1154");
     char * command = malloc(0xFF * sizeof(char));
 
     // Load debt file location

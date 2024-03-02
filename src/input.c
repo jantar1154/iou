@@ -28,28 +28,31 @@ static Debt * result;
 void i_add(Debt * debt_arr, const char * filename) {
     const size_t str_size = 0xFF;
     char * str = malloc(sizeof(char) * str_size);
+    strcpy(str, "");
 
     Debt debt; // Debt to add
     debt.index = fh_get_debt_count(filename);
     d_print_cmd_output("Create new entry:\n");
     printw("From: ");
-    getnstr(str, str_size);
+    while (!strlen(str)) getnstr(str, str_size);
     strcpy(debt.from, strtok(str, "\n"));
+    strcpy(str, "");
 
     printw("To: ");
-    getnstr(str, str_size);
+    while (!strlen(str)) getnstr(str, str_size);
     strcpy(debt.to, strtok(str, "\n"));
+    strcpy(str, "");
 
     printw("Amount: ");
-    char * amount_s = malloc(sizeof(char) * 0x20);
-    getnstr(amount_s, 0x20);
-    const size_t amount_i = atoi(amount_s);
+    while (0 == strlen(str)) getnstr(str, str_size);
+    const size_t amount_i = atoi(str);
     memcpy(&debt.amount, &amount_i, sizeof(debt.amount));
-    free(amount_s);
+    strcpy(str, "");
 
     printw("Currency: ");
-    getnstr(str, str_size);
+    while (!strlen(str)) getnstr(str, str_size);
     memcpy(debt.currency, strtok(str, "\n"), sizeof(debt.currency));
+    strcpy(str, "");
     fh_add_entry(&debt, filename);
     d_print_cmd_output("New entry successfully added!");
 

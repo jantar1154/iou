@@ -11,6 +11,8 @@
 
 #define OUT_MIN_X 1
 
+void d_print_center(int y, const char * message);
+
 void d_print_debts(Debt * debt_arr, const int page, const int debt_count);
 
 void d_last_cmd(const char * cmd_str);

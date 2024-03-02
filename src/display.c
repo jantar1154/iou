@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <ncurses.h>
 #include <stdlib.h>
+#include <string.h>
 
 #include "h/display.h"
 #include "h/util.h"
@@ -17,6 +18,14 @@ void d_print_line() {
         printw("-");
     }
     printw("\n");
+}
+
+// Prints a message into the center of screen
+void d_print_center(int y, const char * message) {
+    const unsigned int max_x = getmaxx(stdscr);
+    attron(A_BOLD | A_ITALIC);
+    mvprintw(y, max_x/2 - strlen(message)/2, message);
+    attroff(A_BOLD | A_ITALIC);
 }
 
 // Prints out every debt from `debt_arr`
