@@ -63,7 +63,7 @@ void d_print_debts(Debt * debt_arr, const int page, const int debt_count) {
         char * str = malloc(0xFF * sizeof(char));
         snprintf(
             str, 0xFF * sizeof(char),
-            "More pages available! Type \"list <1 - %i>\" to see them.",
+            "More pages available! Type \"page <1 - %i>\" to see them.",
             1 + debt_count / entries_per_page
         );
         d_message(str);

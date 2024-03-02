@@ -161,11 +161,13 @@ void i_query(const char * filename, Debt * debt_arr) {
 
 // Handles input commands
 void i_handle_input(
-Debt * debt_arr, char * msg, short * quit, const char * filename) {
+Debt * debt_arr, const char * msg, short * quit, const char * filename) {
     const unsigned short debt_count = fh_get_debt_count(filename);
     unsigned int page = 1;
     bool invalid = false;
-    if (!strcmp(strtok(msg, " "), "list")) {
+    char * msg_mut = calloc(sizeof(char), 0xFF);
+    strncpy(msg_mut, msg, 0xFF);
+    if (!strcmp(strtok(msg_mut, " "), "list")) {
         if (!debt_count) {
             d_print_cmd_output("No entries found!");
         } else {
@@ -173,7 +175,7 @@ Debt * debt_arr, char * msg, short * quit, const char * filename) {
             d_print_debts(debt_arr, max(1, page), debt_count);
             open_text = 0;
         }
-    } else if (!strcmp(msg, "page")) {
+    } else if (!strcmp(msg_mut, "page")) {
         char * n = strtok(NULL, "\n");
         if (!n) n = "1";
         page = strtol(n, NULL, 10);
@@ -185,34 +187,35 @@ Debt * debt_arr, char * msg, short * quit, const char * filename) {
                 d_print_debts(result, page, res_size);
                 break;
         }
-    } else if (!strcmp(msg, "help")) {
+    } else if (!strcmp(msg_mut, "help")) {
         char * str = malloc(sizeof(char) * 0xFFF);
         sprintf(str, "\n%s\n", HELP);
         d_print_cmd_output(str);
         free(str);
-    } else if (!strcmp(msg, "add")) {
+    } else if (!strcmp(msg_mut, "add")) {
         i_add(debt_arr, filename);
-    } else if (!strcmp(msg, "count")) {
+    } else if (!strcmp(msg_mut, "count")) {
         char *str = malloc(sizeof(char) * 0x40);
         snprintf(str, sizeof(char) * 0x40, "Number of entries: %i", debt_count);
         d_print_cmd_output(str);
         free(str);
-    } else if (!strcmp(msg, "edit")) {
+    } else if (!strcmp(msg_mut, "edit")) {
         fh_read_file(debt_arr, filename);
         i_edit(debt_arr, filename);
-    } else if (!strcmp(msg, "query")) {
+    } else if (!strcmp(msg_mut, "query")) {
         fh_read_file(debt_arr, filename);
         i_query(filename, debt_arr);
         open_text = 1;
-    } else if (!strcmp(msg, "remove")) {
+    } else if (!strcmp(msg_mut, "remove")) {
         i_remove_entry(debt_arr, filename);
     } else if (!strcmp(msg, "exit")) {
         free(result);
         *quit = 1;
-    } else if (!strcmp(msg, "clear")) {
+    } else if (!strcmp(msg_mut, "clear")) {
         d_clear_cmd_output();
     } else {
         invalid = true;
     }
+    free(msg_mut);
     d_last_cmd(invalid ? "Invalid command" : msg);
 }
