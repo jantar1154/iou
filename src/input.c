@@ -9,16 +9,16 @@
 #include "h/display.h"
 #include "h/util.h"
 
-const char * HELP =
-    "help:\tshows this help\n"
-    "list:\tlist your debts\n"
-    "query:\tlists debts matching a search\n"
-    "page:\tchanges page of list you are currently viewing\n"
-    "count:\tprints number of debts you have\n"
-    "add:\tadds new entry\n"
-    "edit:\tedits existing entry\n"
-    "clear:\tclears the screen\n"
-    "exit:\texits program\n";
+#define HELP \
+    "help:\tshows this help\n" \
+    "list:\tlist your debts\n" \
+    "query:\tlists debts matching a search\n" \
+    "page:\tchanges page of list you are currently viewing\n" \
+    "count:\tprints number of debts you have\n" \
+    "add:\tadds new entry\n" \
+    "edit:\tedits existing entry\n" \
+    "clear:\tclears the screen\n" \
+    "exit:\texits program\n" \
 
 static int open_text = 0;
 unsigned int res_size = 0;
@@ -186,9 +186,10 @@ Debt * debt_arr, char * msg, short * quit, const char * filename) {
                 break;
         }
     } else if (!strcmp(msg, "help")) {
-        char str[0xFF];
+        char * str = malloc(sizeof(char) * 0xFFF);
         sprintf(str, "\n%s\n", HELP);
         d_print_cmd_output(str);
+        free(str);
     } else if (!strcmp(msg, "add")) {
         i_add(debt_arr, filename);
     } else if (!strcmp(msg, "count")) {
