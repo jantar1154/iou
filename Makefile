@@ -1,6 +1,6 @@
 CC = gcc
 name = iou
-args = -Wall -fsanitize=address -g -O0
+args = -Wall -fsanitize=address -g -O0 -lncurses
 srcdir = src
 objdir = build
 

@@ -2,45 +2,59 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <ncurses.h>
 
 #include "h/input.h"
 #include "h/file_handler.h"
 #include "h/display.h"
+#include "h/util.h"
 
-const char * HELP =
-    "help:\tshows this help\n"
-    "list:\tlist your debts\n"
-    "query:\tlists debts matching a search\n"
-    "count:\tprints number of debts you have\n"
-    "add:\tadds new entry\n"
-    "edit:\tedits existing entry\n"
-    "exit:\texits program\n";
+#define HELP \
+    "help:\tshows this help\n" \
+    "list:\tlist your debts\n" \
+    "query:\tlists debts matching a search\n" \
+    "page:\tchanges page of list you are currently viewing\n" \
+    "count:\tprints number of debts you have\n" \
+    "add:\tadds new entry\n" \
+    "edit:\tedits existing entry\n" \
+    "clear:\tclears the screen\n" \
+    "exit:\texits program\n" \
+
+static int open_text = 0;
+unsigned int res_size = 0;
+static Debt * result;
 
 // Handles user input to add new entry into the file
 void i_add(Debt * debt_arr, const char * filename) {
-    char * str = malloc(0xFF);
+    const size_t str_size = 0xFF;
+    char * str = malloc(sizeof(char) * str_size);
+    strcpy(str, "");
+
     Debt debt; // Debt to add
     debt.index = fh_get_debt_count(filename);
-    printf("From: ");
-    fgets(str, sizeof(debt.from), stdin);
+    d_print_cmd_output("Create new entry:\n");
+    printw("From: ");
+    while (!strlen(str)) getnstr(str, str_size);
     strcpy(debt.from, strtok(str, "\n"));
+    strcpy(str, "");
 
-    printf("To: ");
-    fgets(str, sizeof(debt.to), stdin);
+    printw("To: ");
+    while (!strlen(str)) getnstr(str, str_size);
     strcpy(debt.to, strtok(str, "\n"));
+    strcpy(str, "");
 
-    printf("Amount: ");
-    char * amount_s = malloc(sizeof(char) * 0x20);
-    fgets(amount_s, sizeof(char) * 0x20, stdin);
-    const size_t amount_i = atoi(amount_s);
+    printw("Amount: ");
+    while (0 == strlen(str)) getnstr(str, str_size);
+    const size_t amount_i = atoi(str);
     memcpy(&debt.amount, &amount_i, sizeof(debt.amount));
-    free(amount_s);
+    strcpy(str, "");
 
-    printf("Currency: ");
-    fgets(str, sizeof(debt.currency), stdin);
+    printw("Currency: ");
+    while (!strlen(str)) getnstr(str, str_size);
     memcpy(debt.currency, strtok(str, "\n"), sizeof(debt.currency));
+    strcpy(str, "");
     fh_add_entry(&debt, filename);
-    puts(C_GREEN "New entry successfully added!" C_RESET);
+    d_print_cmd_output("New entry successfully added!");
 
     free(str);
 }
@@ -49,64 +63,69 @@ void i_remove_entry(Debt * debt_arr, const char * filename) {
     char * input = malloc(sizeof(char) * 0xFF);
     const int arr_size = fh_get_debt_count(filename);
     if (arr_size <= 0) {
-        puts(C_YELLOW "No entries found. Nothing to remove" C_RESET);
+        d_print_cmd_output("No entries found. Nothing to remove");
         free(input);
         return;
     }
-    printf("Index: ");
-    fgets(input, sizeof(char) * 0xFF, stdin);
+    d_print_cmd_output("Index: ");
+    getnstr(input, 0xFF);
     const int index = strtol(input, NULL, 10);
     free(input);
     if (index > fh_get_last_id(filename)) {
-        printf(C_RED "Index %i out of range!" C_RESET "\n", index);
+        char * str = malloc(sizeof(char) * 0xFF);
+        snprintf(str, 0xFF, "Index %i out of range!", index);
+        d_print_cmd_output(str);
+        free(str);
         return;
     }
 
     fh_remove_entry(filename, debt_arr, index);
-    printf(C_GREEN "Entry %i removed successfully!" C_RESET "\n", index);
+    char * str = malloc(sizeof(char) * 0xFF);
+    snprintf(str, 0xFF, "Entry %i removed successfully!", index);
+    d_print_cmd_output(str);
+    free(str);
 }
 
 // Gets input from user to edit an entry
 void i_edit(Debt * debt_arr, const char * filename) {
     Debt d;
     char * str = malloc(0xFF * sizeof(char));
-    putchar('\n');
     
-    printf("index: ");
-    fgets(str, 0xFF * sizeof(char), stdin);
+    d_print_cmd_output("index: ");
+    getnstr(str, 0xFF);
     const unsigned int index = strtol(str, NULL, 10);
     if (!fh_index_exists(debt_arr, filename, index)) {
-        puts("Index out of range");
+        d_print_cmd_output("Index out of range\n");
         free(str);
         return;
     }
     const Debt * og = fh_debt_by_id(debt_arr, filename, index);
     
-    printf("From: %s -> ", og->from);
-    fgets(str, 0xFF * sizeof(char), stdin);
-    if (strlen(str) == 1) strcpy(d.from, og->from);
+    printw("From: %s -> ", og->from);
+    getnstr(str, 0xFF);
+    if (strlen(str) == 0) strcpy(d.from, og->from);
     else strcpy(d.from, strtok(str, "\n"));
 
-    printf("To: %s -> ", og->to);
-    fgets(str, 0xFF * sizeof(char), stdin);
-    if (strlen(str) == 1) strcpy(d.to, og->to);
+    printw("To: %s -> ", og->to);
+    getnstr(str, 0xFF);
+    if (strlen(str) == 0) strcpy(d.to, og->to);
     else strcpy(d.to, strtok(str, "\n"));
 
-    printf("Amount: %i -> ", og->amount);
-    fgets(str, 0xFF * sizeof(char), stdin);
+    printw("Amount: %i -> ", og->amount);
+    getnstr(str, 0xFF);
     int amount = strtol(str, NULL, 10);
-    if (strlen(str) == 1) amount = og->amount;
+    if (strlen(str) == 0) amount = og->amount;
     d.amount = amount;
 
-    printf("Currency: %s -> ", og->currency);
-    fgets(str, 0xFF * sizeof(char), stdin);
-    if (strlen(str) == 1) strcpy(d.currency, og->currency);
+    printw("Currency: %s -> ", og->currency);
+    getnstr(str, 0xFF);
+    if (strlen(str) == 0) strcpy(d.currency, og->currency);
     else strcpy(d.currency, strtok(str, "\n"));
 
     fh_edit_entry(index, debt_arr, d, filename);
 
     free(str);
-    puts(C_GREEN "Entry edited successfully!" C_RESET);
+    d_message("Entry edited successfully!");
 }
 
 void i_query(const char * filename, Debt * debt_arr) {
@@ -119,53 +138,84 @@ void i_query(const char * filename, Debt * debt_arr) {
         "3: Amount\n"
         "4: Currency\n";
 
-    printf("%s\nSelect: ", txt);
-    fgets(input, sizeof(char) * 0xFF, stdin);
+    char str[0xFF];
+    snprintf(str, 0xFF, "%s\nSelect: ", txt);
+    d_print_cmd_output(str);
+    getnstr(input, 0xFF);
     const int pick = strtol(input, NULL, 10);
     if (pick < 1 || pick > 4) {
-        fprintf(stderr, C_RED
-            "Selection %i is invalid. Use numbers 1 - 4" C_RESET "\n", pick);
+        d_print_cmd_output("Selection invalid. Use numbers 1 - 4\n");
         free(input);
         return;
     }
 
-    printf("Search: ");
-    fgets(input, sizeof(char) * 0xFF, stdin);
+    printw("Search: ");
+    getnstr(input, 0xFF);
     const char * search = strtok(input, "\n");
 
-    unsigned int res_size = 0;
-    Debt * result = fh_query(debt_arr, count, pick, search, &res_size);
-    d_print_debts(result, res_size);
-    free(result);
+    res_size = 0;
+    result = fh_query(debt_arr, count, pick, search, &res_size);
+    d_print_debts(result, 1, res_size);
     free(input);
 }
 
 // Handles input commands
 void i_handle_input(
 Debt * debt_arr, const char * msg, short * quit, const char * filename) {
-    unsigned short debt_count = fh_get_debt_count(filename);
-    if (!strcmp(msg, "list")) {
-        if (debt_count) {
-            fh_read_file(debt_arr, filename);
-            d_print_debts(debt_arr, debt_count);
+    const unsigned short debt_count = fh_get_debt_count(filename);
+    unsigned int page = 1;
+    bool invalid = false;
+    char * msg_mut = calloc(sizeof(char), 0xFF);
+    strncpy(msg_mut, msg, 0xFF);
+    if (!strcmp(strtok(msg_mut, " "), "list")) {
+        if (!debt_count) {
+            d_print_cmd_output("No entries found!");
         } else {
-            puts(C_YELLOW "No entries found" C_RESET);
+            fh_read_file(debt_arr, filename);
+            d_print_debts(debt_arr, max(1, page), debt_count);
+            open_text = 0;
         }
-    } else if (!strcmp(msg, "help")) {
-        printf("\n%s\n", HELP);
-    } else if (!strcmp(msg, "add")) {
+    } else if (!strcmp(msg_mut, "page")) {
+        char * n = strtok(NULL, "\n");
+        if (!n) n = "1";
+        page = strtol(n, NULL, 10);
+        switch (open_text) {
+            case 0: // list
+                d_print_debts(debt_arr, max(1, page), debt_count);
+                break;
+            case 1: // query
+                d_print_debts(result, page, res_size);
+                break;
+        }
+    } else if (!strcmp(msg_mut, "help")) {
+        char * str = malloc(sizeof(char) * 0xFFF);
+        sprintf(str, "\n%s\n", HELP);
+        d_print_cmd_output(str);
+        free(str);
+    } else if (!strcmp(msg_mut, "add")) {
         i_add(debt_arr, filename);
-    } else if (!strcmp(msg, "count")) {
-        printf("Number of entries: " C_YELLOW "%u\n" C_RESET, debt_count);
-    } else if (!strcmp(msg, "edit")) {
+    } else if (!strcmp(msg_mut, "count")) {
+        char *str = malloc(sizeof(char) * 0x40);
+        snprintf(str, sizeof(char) * 0x40, "Number of entries: %i", debt_count);
+        d_print_cmd_output(str);
+        free(str);
+    } else if (!strcmp(msg_mut, "edit")) {
+        fh_read_file(debt_arr, filename);
         i_edit(debt_arr, filename);
-    } else if (!strcmp(msg, "query")) {
+    } else if (!strcmp(msg_mut, "query")) {
+        fh_read_file(debt_arr, filename);
         i_query(filename, debt_arr);
-    } else if (!strcmp(msg, "remove")) {
+        open_text = 1;
+    } else if (!strcmp(msg_mut, "remove")) {
         i_remove_entry(debt_arr, filename);
     } else if (!strcmp(msg, "exit")) {
+        free(result);
         *quit = 1;
+    } else if (!strcmp(msg_mut, "clear")) {
+        d_clear_cmd_output();
     } else {
-        puts(C_RED "Invalid command" C_RESET);
+        invalid = true;
     }
+    free(msg_mut);
+    d_last_cmd(invalid ? "Invalid command" : msg);
 }

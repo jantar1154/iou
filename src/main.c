@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ncurses.h>
 
 #include "h/input.h"
 #include "h/file_handler.h"
@@ -15,12 +16,13 @@ int main(int argc, char ** argv) {
     if (argc > 2) config_fn = argv[2];
     short quit = 0;
 
-    // Init configuration file
+    // Init
     c_init(config_fn);
-
-    // Show copyright
-    puts(C_BLUE "iou " C_YELLOW "Copyright (C) 2024 jantar1154" C_RESET);
-
+    initscr();
+    
+    // Title text
+    d_print_center(0, "IOU - A debt management CLI application");
+    d_print_center(1, "Copyright (C) 2024 jantar1154");
     char * command = malloc(0xFF * sizeof(char));
 
     // Load debt file location
@@ -35,18 +37,25 @@ int main(int argc, char ** argv) {
     // Prompt loop
     while (!quit) {
         debt_arr = realloc(debt_arr, sizeof(Debt) * fh_get_debt_count(debt_fn));
-        printf("iou > ");
-        fgets(command, 0xFF * sizeof(char), stdin);
+
+        // Text input located at the bottom
+        move(getmaxy(stdscr)-1, OUT_MIN_X);
+        clrtoeol();
+        printw("iou > ");
+        
+        getnstr(command, 0xFF * sizeof(char));
         if (strlen(command) <= 1) continue;
         command = strtok(command, "\n");
         i_handle_input(debt_arr, command, &quit, debt_fn);
+        refresh();
     }
-
-    puts("Exiting " C_YELLOW "iou" C_RESET ". Goodbye!");
 
     free(debt_arr);
     free(command);
     free(val);
+
+    refresh();
+    endwin();
 
     return 0;
 }
