@@ -11,6 +11,7 @@
 #include "h/util.h"
 
 #define HELP \
+    "HELP: " \
     "help:\tshows this help\n" \
     "list:\tlist your debts\n" \
     "query:\tlists debts matching a search\n" \
@@ -33,7 +34,9 @@ void i_add(Debt * debt_arr, const char * filename) {
 
     Debt debt; // Debt to add
     debt.index = fh_get_debt_count(filename);
+    attron(COL_YELLOW);
     d_print_cmd_output("Create new entry:\n");
+    attroff(COL_YELLOW);
     printw("From: ");
     while (!strlen(str)) getnstr(str, str_size);
     strcpy(debt.from, strtok(str, "\n"));
