@@ -7,9 +7,11 @@
 #include "h/input.h"
 #include "h/file_handler.h"
 #include "h/display.h"
+#include "h/colour.h"
 #include "h/util.h"
 
 #define HELP \
+    "HELP: " \
     "help:\tshows this help\n" \
     "list:\tlist your debts\n" \
     "query:\tlists debts matching a search\n" \
@@ -32,7 +34,9 @@ void i_add(Debt * debt_arr, const char * filename) {
 
     Debt debt; // Debt to add
     debt.index = fh_get_debt_count(filename);
+    attron(COL_YELLOW);
     d_print_cmd_output("Create new entry:\n");
+    attroff(COL_YELLOW);
     printw("From: ");
     while (!strlen(str)) getnstr(str, str_size);
     strcpy(debt.from, strtok(str, "\n"));
@@ -63,7 +67,9 @@ void i_remove_entry(Debt * debt_arr, const char * filename) {
     char * input = malloc(sizeof(char) * 0xFF);
     const int arr_size = fh_get_debt_count(filename);
     if (arr_size <= 0) {
+        attron(COL_RED);
         d_print_cmd_output("No entries found. Nothing to remove");
+        attroff(COL_RED);
         free(input);
         return;
     }
@@ -73,7 +79,9 @@ void i_remove_entry(Debt * debt_arr, const char * filename) {
     free(input);
     if (index > fh_get_last_id(filename)) {
         char * str = malloc(sizeof(char) * 0xFF);
+        attron(COL_RED);
         snprintf(str, 0xFF, "Index %i out of range!", index);
+        attroff(COL_RED);
         d_print_cmd_output(str);
         free(str);
         return;
@@ -81,7 +89,9 @@ void i_remove_entry(Debt * debt_arr, const char * filename) {
 
     fh_remove_entry(filename, debt_arr, index);
     char * str = malloc(sizeof(char) * 0xFF);
+    attron(COL_GREEN);
     snprintf(str, 0xFF, "Entry %i removed successfully!", index);
+    attroff(COL_GREEN);
     d_print_cmd_output(str);
     free(str);
 }
@@ -95,7 +105,9 @@ void i_edit(Debt * debt_arr, const char * filename) {
     getnstr(str, 0xFF);
     const unsigned int index = strtol(str, NULL, 10);
     if (!fh_index_exists(debt_arr, filename, index)) {
+        attron(COL_RED);
         d_print_cmd_output("Index out of range\n");
+        attroff(COL_RED);
         free(str);
         return;
     }
@@ -125,7 +137,9 @@ void i_edit(Debt * debt_arr, const char * filename) {
     fh_edit_entry(index, debt_arr, d, filename);
 
     free(str);
+    attron(COL_GREEN);
     d_message("Entry edited successfully!");
+    attroff(COL_GREEN);
 }
 
 void i_query(const char * filename, Debt * debt_arr) {
@@ -144,7 +158,9 @@ void i_query(const char * filename, Debt * debt_arr) {
     getnstr(input, 0xFF);
     const int pick = strtol(input, NULL, 10);
     if (pick < 1 || pick > 4) {
+        attron(COL_RED);
         d_print_cmd_output("Selection invalid. Use numbers 1 - 4\n");
+        attroff(COL_RED);
         free(input);
         return;
     }
@@ -169,7 +185,9 @@ Debt * debt_arr, const char * msg, short * quit, const char * filename) {
     strncpy(msg_mut, msg, 0xFF);
     if (!strcmp(strtok(msg_mut, " "), "list")) {
         if (!debt_count) {
+            attron(COL_RED);
             d_print_cmd_output("No entries found!");
+            attroff(COL_RED);
         } else {
             fh_read_file(debt_arr, filename);
             d_print_debts(debt_arr, max(1, page), debt_count);
@@ -217,5 +235,11 @@ Debt * debt_arr, const char * msg, short * quit, const char * filename) {
         invalid = true;
     }
     free(msg_mut);
-    d_last_cmd(invalid ? "Invalid command" : msg);
+    if (invalid) {
+        attron(COL_RED);
+        d_last_cmd("Invalid command");
+        attroff(COL_RED);
+    } else {
+        d_last_cmd(msg);
+    }
 }

@@ -123,6 +123,7 @@ bool fh_q_compare(const Debt * debt, const char * search, int query_type) {
     }
 }
 
+// Checks whether an entry with an index of `index` exists in file `filename`
 bool fh_index_exists(
 Debt * debt_arr,
 const char * filename,

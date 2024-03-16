@@ -8,6 +8,7 @@
 #include "h/debt.h"
 #include "h/config.h"
 #include "h/display.h"
+#include "h/colour.h"
 
 int main(int argc, char ** argv) {
     char * debt_fn = "./debt.dat";
@@ -19,6 +20,7 @@ int main(int argc, char ** argv) {
     // Init
     c_init(config_fn);
     initscr();
+    clr_init();
     
     // Title text
     d_print_center(0, "IOU - A debt management CLI application");
@@ -41,7 +43,9 @@ int main(int argc, char ** argv) {
         // Text input located at the bottom
         move(getmaxy(stdscr)-1, OUT_MIN_X);
         clrtoeol();
+        attron(COL_YELLOW);
         printw("iou > ");
+        attroff(COL_YELLOW);
         
         getnstr(command, 0xFF * sizeof(char));
         if (strlen(command) <= 1) continue;

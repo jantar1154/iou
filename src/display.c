@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "h/display.h"
+#include "h/colour.h"
 #include "h/util.h"
 
 #define LINE_W 24
@@ -23,9 +24,9 @@ void d_print_line() {
 // Prints a message into the center of screen
 void d_print_center(int y, const char * message) {
     const unsigned int max_x = getmaxx(stdscr);
-    attron(A_BOLD | A_ITALIC);
+    attron(A_BOLD | A_ITALIC | A_STANDOUT | COL_BLUE);
     mvprintw(y, max_x/2 - strlen(message)/2, message);
-    attroff(A_BOLD | A_ITALIC);
+    attroff(A_BOLD | A_ITALIC | A_STANDOUT | COL_BLUE);
 }
 
 // Prints out every debt from `debt_arr`
@@ -102,5 +103,7 @@ void d_clear_cmd_output() {
 // Text will appear at MAX_Y - 3
 void d_message(const char * message) {
     move(getmaxy(stdscr) - 3, OUT_MIN_X);
+    attron(COL_BLUE);
     printw(message);
+    attroff(COL_BLUE);
 }
